@@ -1,4 +1,4 @@
-# project
+# firebase-vue-todo
 
 ## Project setup
 ```
