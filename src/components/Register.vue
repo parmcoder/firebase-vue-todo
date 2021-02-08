@@ -1,11 +1,11 @@
 <template>
-  <v-container>
+<v-container>
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <v-card>
           <v-card-text>
             <v-container>
-              <form @submit.prevent="onSignup">
+              <form @submit.prevent="onSignin">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
@@ -30,18 +30,7 @@
                 </v-layout>
                 <v-layout row>
                   <v-flex xs12>
-                    <v-text-field
-                      name="confirmPassword"
-                      label="Confirm Password"
-                      id="confirmPassword"
-                      v-model="confirmPassword"
-                      type="password"
-                      :rules="[comparePasswords]"></v-text-field>
-                  </v-flex>
-                </v-layout>
-                <v-layout row>
-                  <v-flex xs12>
-                    <v-btn type="submit">Sign up</v-btn>
+                    <v-btn type="submit">Sign Up</v-btn>
                   </v-flex>
                 </v-layout>
               </form>
@@ -58,28 +47,24 @@
     data () {
       return {
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
       }
     },
     computed: {
-      comparePasswords () {
-        return this.password !== this.confirmPassword ? 'Passwords do not match' : ''
-      },
       user () {
-        return this.$store.getters.user
+        return this.$store.getters["auth/user"]
       }
     },
     watch: {
       user (value) {
         if (value !== null && value !== undefined) {
-          this.$router.push('/')
+          this.$router.push('/todos')
         }
       }
     },
     methods: {
-      onSignup () {
-        this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
+      onSignin () {
+        this.$store.dispatch('auth/signUserUp', {email: this.email, password: this.password})
       }
     }
   }

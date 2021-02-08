@@ -1,12 +1,15 @@
 import "@/plugins/firebase";
+import "@/plugins/vuetify";
 import firebase from "firebase/app";
 import "firebase/auth";
 import store from "@/store";
 import router from "@/router";
 import Vue from "vue";
 import App from "./App.vue";
+// import "@/assets/todo.css";
+import vuetify from './plugins/vuetify';
+import '@mdi/font/css/materialdesignicons.css'
 
-import "@/assets/todo.css";
 
 Vue.config.productionTip = false;
 
@@ -19,7 +22,6 @@ new Promise((resolve) => {
       Vue.$store.dispatch("auth/setAuthenticated", user);
     } else {
       Vue.$store.dispatch("auth/setAuthenticated", null);
-      Vue.$router.push({ name: "login" });
     }
   });
   if(!isInitialized){
@@ -27,9 +29,11 @@ new Promise((resolve) => {
   }
 }).then(() => {
   isInitialized = true;
+
   new Vue({
     render: (createApp) => createApp(App),
     store,
-    router,
+    vuetify,
+    router
   }).$mount("#app");
 });

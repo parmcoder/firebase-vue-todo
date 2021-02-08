@@ -1,24 +1,19 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <v-app>
+    <main>
+      <NavBar/>
+      <router-view></router-view>
+    </main>
+  </v-app>
 </template>
 
 <script>
-export default {
-  name: 'app',
-  components: {
-  },
-};
-</script>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+import NavBar from '@/components/NavBar'
+export default {
+  name: 'App',
+  components: {
+    NavBar
+  }
 }
-</style>
+</script>
