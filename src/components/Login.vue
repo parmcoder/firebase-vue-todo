@@ -1,49 +1,59 @@
 <template>
   <div>
-  <h2>Login</h2>
+    <h2>Login</h2>
     <input
-        v-model="username"
-        class="text-input"
-        type="text"
-        placeholder="Enter your username"
-        autofocus
+      v-model="username"
+      class="text-input"
+      type="text"
+      placeholder="Enter your username"
+      autofocus
     />
-    <br>
+    <br />
     <input
-        v-model="password"
-        class="text-input"
-        type="password"
-        placeholder="Enter your password"
-        autofocus
+      v-model="password"
+      class="text-input"
+      type="password"
+      placeholder="Enter your password"
+      @keyup.enter="doLogin"
+      autofocus
     />
-    <br>
+    <br />
     <p if="errorMessage">{{ errorMessage }}</p>
-    <br>
+    <br />
     <button class="login-button" type="submit" @click="doLogin">Login</button>
   </div>
 </template>
 
 <script>
+import firebase from "firebase/app";
+import "firebase/auth";
+
 export default {
   data() {
     return {
-      username: 'user',
-      password: 'pass',
-      errorMessage: '',
+      username: "coding4parm@gmail.com",
+      password: "123456",
+      errorMessage: ""
     };
   },
   methods: {
     async doLogin() {
-      await this.$store.dispatch('auth/login', {
-        username: this.username,
-        password: this.password,
-      });
-      if (this.$store.state.auth.authenticated) {
-        console.log('authenticated and attempting to redirect to todo page');
-        await this.$router.push({ name: 'todos' });
+      try {
+        const response = await firebase
+          .auth()
+          .signInWithEmailAndPassword(this.username, this.password);
+        if (response) {
+          await this.$store.dispatch('auth/setAuthenticated', response.user);
+          this.$router.push({name: 'todos'});
+        }else{
+          console.log(response);
+        }
+      } catch (error) {
+        this.errorMessage = error.message;
       }
-    },
-  },
+
+    }
+  }
 };
 </script>
 

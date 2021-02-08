@@ -1,34 +1,21 @@
 export default {
   state: {
-    authenticated: false,
-    errorMessage: '',
+    user: null,
   },
   mutations: {
-    setAuthenticated(state, authenticated) {
-      state.authenticated = authenticated;
-    },
-    setErrorMessage(state, message) {
-      state.errorMessage = message;
-    },
+    setUser(state,user){
+      state.user = user;
+    }
   },
   actions: {
-    login(context, payload) {
-      const authenticated = (payload.username === 'user' && payload.password === 'pass');
-      context.commit('setAuthenticated', authenticated);
-      if (!authenticated) {
-        context.commit('setErrorMessage', 'Invalid username or password');
-      } else {
-        context.commit('setErrorMessage', '');
-      }
+    setAuthenticated(context, user){
+      context.commit('setUser', user);
     },
-    logout(context) {
-      context.commit('auth/setAuthenticated', false);
-      context.commit('auth/setErrorMessage', '');
-    },
+
   },
   getters: {
     authenticated(state) {
-      return state.authenticated;
+      return state.user != null;
     },
   },
 };

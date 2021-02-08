@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="main" v-if="todos.length">
+    <section class="main" v-if="todos">
       <ul class="todo-list">
         <li
           v-for="task in todos"
@@ -32,6 +32,7 @@ export default {
       editing: null,
     };
   },
+  props: ['todos'],
   methods: {
     destroyTodo(task) {
       this.$store.dispatch('todos/destroyTodo', task);
@@ -49,11 +50,6 @@ export default {
     },
     cancelEditing() {
       this.editing = null;
-    },
-  },
-  computed: {
-    todos() {
-      return this.$store.state.todos.todos;
     },
   },
 };

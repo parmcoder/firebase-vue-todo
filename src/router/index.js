@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
+import firebase from "firebase/app";
+import "firebase/auth";
 const Todos = () => import('@/components/Todo.vue');
 const Login = () => import('@/components/Login.vue');
 
@@ -12,8 +13,7 @@ const routes = [
     name: 'todos',
     component: Todos,
     meta: {
-      requiredAuthentication: true,
-      roles: ['admin', 'user'],
+      requiresAuth: true,
     },
   },
   {
@@ -21,7 +21,7 @@ const routes = [
     name: 'login',
     component: Login,
     meta: {
-      requiredAuthentication: false,
+      requiresAuth: false,
     },
   },
 ];
@@ -31,19 +31,14 @@ const router = new VueRouter({
   routes,
 });
 
-const beforeRouteEnter = async (to, from, next) => {
-  if (to.meta.requiredAuthentication) {
-    if (Vue.$store.state.auth.authenticated) {
-      next();
-    } else {
-      next({ name: 'login' });
-    }
-  } else {
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  if (requiresAuth && !await firebase.getCurrentUser()){
+    next('login');
+  }else{
     next();
   }
-};
-
-router.beforeEach(beforeRouteEnter);
+});
 
 Vue.$router = router;
 
