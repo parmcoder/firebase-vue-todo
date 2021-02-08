@@ -1,12 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import store from '@/store';
+import router from '@/router';
+import Vue from 'vue';
+import App from './App.vue';
 
-Vue.config.productionTip = false
+import '@/assets/todo.css';
+
+Vue.config.productionTip = false;
 
 new Vue({
-  router,
+  render: (createApp) => createApp(App),
   store,
-  render: h => h(App)
-}).$mount('#app')
+  router,
+}).$mount('#app');

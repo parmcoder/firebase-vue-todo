@@ -1,15 +1,17 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-Vue.use(Vuex)
+import Todos from './todos';
+import Auth from './auth';
 
-export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
   modules: {
-  }
-})
+    auth: { ...Auth, namespaced: true },
+    todos: { ...Todos, namespaced: true },
+  },
+});
+
+Vue.$store = store;
+export default store;
