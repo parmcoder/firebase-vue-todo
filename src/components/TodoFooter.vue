@@ -6,7 +6,7 @@
         </span>
     <button
         class="clear-completed"
-        @click="$store.dispatch('todos/clearCompleted')"
+        @click="$store.dispatch('todos/clearCompleted', { root: true })"
         v-show="$store.getters['todos/completedTodos'].length"
     >
       Clear completed
