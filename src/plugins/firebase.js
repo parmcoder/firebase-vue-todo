@@ -15,6 +15,7 @@ var firebaseConfig = {
   measurementId: "G-W5Z2C6PNCB",
 };
 // Initialize Firebase
+
 firebase.initializeApp(firebaseConfig);
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 firebase.getCurrentUser = () => {

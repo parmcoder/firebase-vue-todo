@@ -26,6 +26,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          alert(error);
         });
     },
     signUserIn({ commit }, payload) {
@@ -40,21 +41,22 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          alert(error);
         });
     },
     signUserInGoogle({ commit }) {
-      var provider = new firebase.auth.GoogleAuthProvider();
       firebase
         .auth()
-        .signInWithPopup(provider)
-        .then((user) => {
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then((result) => {
           const newUser = {
-            id: user.uid,
+            id: result.user.uid,
           };
           commit("setUser", newUser);
         })
         .catch((error) => {
           console.log(error);
+          alert(error);
         });
     },
     signOut({ commit }) {
