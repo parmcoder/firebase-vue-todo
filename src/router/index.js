@@ -5,6 +5,7 @@ import "firebase/auth";
 const Todos = () => import('@/components/Todo.vue');
 const Login = () => import('@/components/Login.vue');
 const Register = () => import('@/components/Register.vue');
+const Home = () => import('@/components/Home.vue');
 
 Vue.use(VueRouter);
 
@@ -32,6 +33,16 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
+    meta: {
+      requiresAuth: false,
+      isLoggedIn: false
+
+    },
+  },
+  {
+    path: '/',
+    name: 'home',
+    component: Home,
     meta: {
       requiresAuth: false,
       isLoggedIn: false

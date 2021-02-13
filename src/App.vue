@@ -1,19 +1,21 @@
 <template>
   <v-app>
-    <main>
-      <NavBar/>
+    <v-main>
+      <!-- <NavBar/> -->
       <router-view></router-view>
-    </main>
+      <v-footer absolute>
+        <div class="text-h5">Written by Parmcoder</div>
+      </v-footer>
+    </v-main>
   </v-app>
 </template>
 
 <script>
-
-import NavBar from '@/components/NavBar'
+// import NavBar from '@/components/NavBar'
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    NavBar
+    // NavBar
   }
-}
+};
 </script>

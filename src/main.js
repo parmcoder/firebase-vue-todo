@@ -16,6 +16,9 @@ Vue.config.productionTip = false;
 let isInitialized = false;
 console.log(isInitialized)
 
+/**
+ * Magic code - It is a trick to recognize user that already signed in.
+ */
 new Promise((resolve) => {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
