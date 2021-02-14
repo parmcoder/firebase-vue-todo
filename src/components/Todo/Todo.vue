@@ -1,10 +1,6 @@
 <template>
   <v-container fluid>
-    <v-data-iterator
-      :items="todos"
-      item-key="name"
-      :items-per-page="4"
-    >
+    <v-data-iterator :items="todos" item-key="name" :items-per-page="4">
       <template v-slot:default="{ items }">
         <v-row>
           <v-col
@@ -18,6 +14,8 @@
             <v-card>
               <v-card-title>
                 <h4>{{ item.text }}</h4>
+                <v-spacer></v-spacer>
+                <v-btn color="blue"></v-btn>
               </v-card-title>
               <v-divider></v-divider>
               <v-list dense>
