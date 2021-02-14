@@ -50,6 +50,7 @@ export default {
   mounted() {
     this.todoRef.on("value", snapshot => {
       this.todos = snapshot.val();
+      console.log(this.todos)
     });
   },
   methods: {

@@ -3,8 +3,11 @@ import VueRouter from 'vue-router';
 import firebase from "firebase/app";
 import "firebase/auth";
 const Todos = () => import('@/components/Todo.vue');
+const Todos2 = () => import('@/components/Todo/Todo.vue');
+// const Tasks = () => import('@/components/Todo/Task.vue');
 const Login = () => import('@/components/Login.vue');
 const Register = () => import('@/components/Register.vue');
+const Home = () => import('@/components/Home.vue');
 
 Vue.use(VueRouter);
 
@@ -17,6 +20,15 @@ const routes = [
       requiresAuth: true,
       isLoggedIn: true
 
+    },
+  },
+  {
+    path: '/todos2',
+    name: 'todos2',
+    component: Todos2,
+    meta: {
+      requiresAuth: true,
+      isLoggedIn: true
     },
   },
   {
@@ -36,6 +48,15 @@ const routes = [
       requiresAuth: false,
       isLoggedIn: false
 
+    },
+  },
+  {
+    path: '/',
+    name: 'home',
+    component: Home,
+    meta: {
+      requiresAuth: false,
+      isLoggedIn: false
     },
   },
 ];
