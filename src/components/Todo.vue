@@ -46,11 +46,11 @@ export default {
   },
   created() {
     this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
-    console.log(this.todoRef)
   },
   mounted() {
     this.todoRef.on("value", snapshot => {
       this.todos = snapshot.val();
+      console.log(this.todos)
     });
   },
   methods: {

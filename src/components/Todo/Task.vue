@@ -33,19 +33,32 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
+import "firebase/database";
+
+const database = firebase.database();
+
 export default {
   data() {
     return {
       editing: null,
       includeFiles: true,
       enabled: false,
-      todo: [],
+      todos: {},
+      todoRef: null
     };
   },
 //   props: ["todos"],
   methods: {
     // update() {},
     // create() {},
+    createTodo() {
+      this.todoRef.push({ text: this.todoText.trim(), isDone: false });
+      this.todoText = "";
+    },
+    clearCompleted() {
+      this.$store.dispatch("todos/clearCompleted");
+    },
     destroyTodo(task) {
       this.$store.dispatch("todos/destroyTodo", task);
     },
@@ -63,6 +76,15 @@ export default {
     cancelEditing() {
       this.editing = null;
     }
-  }
+  },
+  created() {
+    this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
+  },
+  mounted() {
+    this.todoRef.on("value", snapshot => {
+      this.todos = snapshot.val();
+      console.log(this.todos)
+    });
+  },
 };
 </script>
