@@ -36,6 +36,22 @@
       </v-layout>
     </v-container>
     <v-container fluid>
+      <v-layout align-center justify-center>
+        <v-flex md10>
+          <v-card class="elevation-12">
+            <v-card-text>
+              <h2>
+                Active tasks: {{ activeCount }}
+              </h2>
+              <h2>
+                Completed tasks: {{ completedCount }}
+              </h2>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+    <v-container fluid>
       <v-data-iterator :items="todos" item-key="name">
         <template v-slot:default="{ items }">
           <v-row>
@@ -49,44 +65,69 @@
             >
               <v-card>
                 <v-card-title>
-                  <v-checkbox v-model="checkbox" :value="item.id"></v-checkbox>
+                  <v-checkbox
+                    :input-value="item.isDone"
+                    v-on:change="changeStatus(item.id, item.isDone, 'isDone')"
+                  ></v-checkbox>
                   <h4>{{ item.text }}</h4>
                   <v-spacer></v-spacer>
-                  <v-btn small color="blue">add</v-btn>
-                  <v-btn small color="green">done</v-btn>
-                  <v-btn small color="red">remove</v-btn>
+                  <v-btn
+                    v-if="!item.isDone && !item.isAdding"
+                    small
+                    color="blue"
+                    @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                    >ADD</v-btn
+                  ><v-btn
+                    v-if="!item.isDone && item.isAdding"
+                    color="blue"
+                    small
+                    @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                    >done</v-btn
+                  >
+                  <v-btn
+                    v-if="!item.isDone && !item.isAdding"
+                    small
+                    color="cyan"
+                    >edit</v-btn
+                  >
+                  <v-btn
+                    v-if="item.isDone"
+                    small
+                    color="red"
+                    @click="destroyTodo(item.id)"
+                    >remove</v-btn
+                  >
                 </v-card-title>
                 <v-divider></v-divider>
-                <v-card v-if=true class="elevation-12">
-                  <v-card-text>
-                    <validation-observer ref="observer" v-slot="{ invalid }">
-                      <form @submit.prevent="createTodo">
-                        <validation-provider :name="item.id" rules="required">
-                          <v-text-field
-                            :name="item.id"
-                            label="What needs to be done?"
-                            :id="item.id"
-                            :v-model="item.id"
-                            type="text"
-                            required
-                          ></v-text-field>
-                        </validation-provider>
-                        <v-layout>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            :disabled="invalid"
-                            color="primary"
-                            x-large
-                            type="submit"
-                          >
-                            Add to todo-list</v-btn
-                          >
-                        </v-layout>
-                      </form>
-                    </validation-observer>
-                  </v-card-text>
-                </v-card>
+                <v-card-text v-if="item.isAdding && !item.isDone">
+                  <validation-observer ref="observer" v-slot="{ invalid }">
+                    <form @submit.prevent="createSubTodo(item.id)">
+                      <validation-provider :name="item.id" rules="required">
+                        <v-text-field
+                          :name="item.id"
+                          label="What needs to be done?"
+                          :id="item.id"
+                          v-model="subtask[item.id]"
+                          type="text"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
+                      <v-layout>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          :disabled="invalid"
+                          color="primary"
+                          type="submit"
+                        >
+                          Add subtask</v-btn
+                        >
+                      </v-layout>
+                    </form>
+                  </validation-observer>
+                </v-card-text>
               </v-card>
+              <v-divider></v-divider>
+              <v-list></v-list>
             </v-col>
           </v-row>
         </template>
@@ -122,7 +163,9 @@ export default {
     todos: [],
     todoRef: null,
     checkbox: [],
-    task: ""
+    task: "",
+    subtask: {},
+    adds: {}
   }),
   components: {
     ValidationProvider,
@@ -136,15 +179,38 @@ export default {
       this.todoRef.push({
         text: this.task.trim(),
         isDone: false,
-        subtasks: []
+        isAdding: false,
+        subtasks: "none"
       });
+      database
+        .ref(`/users/${this.$store.state.auth.user.uid}/subtasks`)
+        .push({});
       this.task = "";
+    },
+    createSubTodo(id2) {
+      console.log(this.subtask[id2]);
+      database
+        .ref(`/users/${this.$store.state.auth.user.uid}/${id2}/subtasks`)
+        .push({
+          text: this.subtask[id2].trim(),
+          isDone: false
+        });
+      this.subtask[id2] = "";
+    },
+    changeStatus(id2, status, value) {
+      firebase
+        .database()
+        .ref(`users/${this.$store.state.auth.user.uid}/${id2}/${value}`)
+        .set(!status);
     },
     clearCompleted() {
       this.$store.dispatch("todos/clearCompleted");
     },
     destroyTodo(task) {
-      this.$store.dispatch("todos/destroyTodo", task);
+      firebase
+        .database()
+        .ref(`users/${this.$store.state.auth.user.uid}/${task}`)
+        .set({});
     },
     startEditing(task) {
       this.editing = task;
@@ -166,17 +232,41 @@ export default {
   },
   mounted() {
     this.todoRef.on("value", snapshot => {
-      const array = [];
       const fb = snapshot.val();
       //turn object to array
-      Object.keys(fb).forEach(key => {
-        let obj = fb[key];
-        obj["id"] = key;
-        array.push(obj);
-      });
+      const array = [];
+      if (fb) {
+        Object.keys(fb).forEach(key => {
+          const array2 = [];
+          // console.log(fb[key]["subtasks"]);
+          if (
+            fb[key]["subtasks"] !== "none" &&
+            fb[key]["subtasks"] !== "undefined"
+          ) {
+            Object.keys(fb[key]["subtasks"]).forEach(key2 => {
+              array2.push(fb[key]["subtasks"][key2]);
+            });
+            // console.log("Not none!");
+          }
+          let obj = fb[key];
+          obj["id"] = key;
+          obj["subtasks"] = array2;
+          this.adds[key] = false;
+          array.push(obj);
+        });
+      }
+
       this.todos = array;
-      console.log(this.checkbox);
+      // console.log(array);
     });
+  },
+  computed: {
+  activeCount () {
+    return this.todos.filter((todo) => !todo.isDone).length
+  },
+  completedCount () {
+    return this.todos.filter((todo) => todo.isDone).length
   }
+}
 };
 </script>
