@@ -33,7 +33,7 @@
                     <v-flex xs12>
                       <validation-provider
                         v-slot="{ errors }"
-                        name="email"
+                        name="password"
                         rules="required"
                       >
                         <v-text-field
