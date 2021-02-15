@@ -35,11 +35,11 @@
               <v-col>
                 <v-container>
                   <v-layout align-center justify-center>
-                    <v-btn color="green"> Show completed tasks</v-btn>
+                    <v-btn color="green" @click="setHiddenCompleted(false)"> Show completed tasks</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="purple"> Hide completed tasks</v-btn>
+                    <v-btn color="purple" @click="setHiddenCompleted(true)"> Hide completed tasks</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="red"> Remove completed tasks</v-btn>
+                    <v-btn color="red" @click="removeAllCompletedTasks()"> Remove completed tasks</v-btn>
                   </v-layout>
                 </v-container>
               </v-col>
@@ -49,16 +49,17 @@
       </v-layout>
     </v-container>
     <v-container fluid>
-      <v-data-iterator :items="todos" item-key="name">
+      <v-data-iterator :items="visibleItems" item-key="id">
         <template v-slot:default="{ items }">
           <v-row>
             <v-col v-for="item in items" :key="item.key" cols="20" sm="10" md="10" lg="6">
-              <v-card>
+              <v-card :color="color(item.isDone)">
                 <v-card-title>
                   <v-checkbox :input-value="item.isDone" v-on:change="changeStatusTask(item.id, item.isDone, item.subtasks, 'isDone')"></v-checkbox>
                   <h4>{{ item.text }}</h4>
                   <v-spacer></v-spacer>
                   <v-spacer></v-spacer>
+                  <v-img v-if=item.isDone max-height="100" max-width="100" src="../../assets/pngegg.png">DONE!</v-img>
                 </v-card-title>
                 <v-row
                   ><v-col>
@@ -96,14 +97,15 @@
                     </form>
                   </validation-observer>
                 </v-card-text>
+                <v-divider></v-divider>
               </v-card>
-              <v-divider></v-divider>
+
               <v-card>
-                <v-card-title>
+                <v-card-text>
                   <v-spacer></v-spacer>
                   Subtasks
                   <v-spacer></v-spacer>
-                </v-card-title>
+                </v-card-text>
               </v-card>
               <v-list v-for="subtask in item.subtasks" :key="subtask.id" dense>
                 <v-list-item>
@@ -153,6 +155,7 @@ export default {
     task: '',
     subtask: {},
     adds: {},
+    // showState: 0, // 1 for show, 2 for hide
   }),
   components: {
     ValidationProvider,
@@ -167,6 +170,7 @@ export default {
         text: this.task.trim(),
         isDone: false,
         isAdding: false,
+        isHidden: false,
         subtasks: 'none',
       });
       database.ref(`/users/${this.$store.state.auth.user.uid}/subtasks`).push({});
@@ -193,6 +197,11 @@ export default {
           .database()
           .ref(`users/${this.$store.state.auth.user.uid}/${id2}/subtasks/${x.id}/${value}`)
           .set(!status));
+      } else if (item.length > 0 && status) {
+        firebase
+          .database()
+          .ref(`users/${this.$store.state.auth.user.uid}/${id2}/subtasks/${item[item.length - 1].id}/${value}`)
+          .set(!status);
       }
       firebase
         .database()
@@ -223,19 +232,23 @@ export default {
           .set({});
       }
     },
-    startEditing(task) {
-      this.editing = task;
+    setHiddenCompleted(bool) {
+      this.completedItems.forEach((x) => firebase
+        .database()
+        .ref(`users/${this.$store.state.auth.user.uid}/${x.id}/isHidden`)
+        .set(bool));
     },
-    finishEditing(event) {
-      if (!this.editing) {
-        return;
+    removeAllCompletedTasks() {
+      this.completedItems.forEach((x) => firebase
+        .database()
+        .ref(`users/${this.$store.state.auth.user.uid}/${x.id}`)
+        .set({}));
+    },
+    color(isDone) {
+      if (isDone) {
+        return 'pink accent-2';
       }
-      const textbox = event.target;
-      this.editing.text = textbox.value.trim();
-      this.editing = null;
-    },
-    cancelEditing() {
-      this.editing = null;
+      return null;
     },
   },
   created() {
@@ -263,12 +276,12 @@ export default {
           obj.subtasks = array2;
 
           if (array2.length > 0) {
-            console.log('yo!');
+            // console.log('yo!');
             const done = array2.filter((x) => x.isDone).length;
-            console.log(done);
+            // console.log(done);
             if (done === array2.length) {
-              console.log(array2);
-              console.log(key);
+              // console.log(array2);
+              // console.log(key);
               obj.isDone = true;
               // this.changeStatusTask(key, false, array2, 'isDone');
               firebase
@@ -288,9 +301,8 @@ export default {
           array.push(obj);
         });
       }
-
       this.todos = array;
-      // console.log(array);
+      console.log(array);
     });
   },
   computed: {
@@ -299,6 +311,12 @@ export default {
     },
     completedCount() {
       return this.todos.filter((todo) => todo.isDone).length;
+    },
+    completedItems() {
+      return this.todos.filter((todo) => todo.isDone);
+    },
+    visibleItems() {
+      return this.todos.filter((todo) => !todo.isHidden);
     },
   },
 };
