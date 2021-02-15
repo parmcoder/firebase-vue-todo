@@ -40,12 +40,8 @@
         <v-flex md10>
           <v-card class="elevation-12">
             <v-card-text>
-              <h2>
-                Active tasks: {{ activeCount }}
-              </h2>
-              <h2>
-                Completed tasks: {{ completedCount }}
-              </h2>
+              <h2>Active tasks: {{ activeCount }}</h2>
+              <h2>Completed tasks: {{ completedCount }}</h2>
             </v-card-text>
           </v-card>
         </v-flex>
@@ -261,12 +257,12 @@ export default {
     });
   },
   computed: {
-  activeCount () {
-    return this.todos.filter((todo) => !todo.isDone).length
-  },
-  completedCount () {
-    return this.todos.filter((todo) => todo.isDone).length
+    activeCount() {
+      return this.todos.filter(todo => !todo.isDone).length;
+    },
+    completedCount() {
+      return this.todos.filter(todo => todo.isDone).length;
+    }
   }
-}
 };
 </script>

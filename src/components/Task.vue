@@ -29,13 +29,13 @@
 export default {
   data() {
     return {
-      editing: null,
+      editing: null
     };
   },
-  props: ['todos'],
+  props: ["todos"],
   methods: {
     destroyTodo(task) {
-      this.$store.dispatch('todos/destroyTodo', task);
+      this.$store.dispatch("todos/destroyTodo", task);
     },
     startEditing(task) {
       this.editing = task;
@@ -50,7 +50,7 @@ export default {
     },
     cancelEditing() {
       this.editing = null;
-    },
-  },
+    }
+  }
 };
 </script>

@@ -120,20 +120,20 @@ extend("required", {
   ...required,
   message: "{_field_} can not be empty"
 });
-extend('min', {
-    ...min,
-    message: '{_field_} may not be lesser than {length} characters',
-  })
+extend("min", {
+  ...min,
+  message: "{_field_} may not be lesser than {length} characters"
+});
 extend("email", {
   ...email,
   message: "Email must be valid"
 });
-extend('password', {
-  params: ['target'],
+extend("password", {
+  params: ["target"],
   validate(value, { target }) {
     return value === target;
   },
-  message: 'Password confirmation does not match'
+  message: "Password confirmation does not match"
 });
 export default {
   data() {

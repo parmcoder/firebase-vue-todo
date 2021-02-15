@@ -48,7 +48,7 @@ export default {
       todoRef: null
     };
   },
-//   props: ["todos"],
+  //   props: ["todos"],
   methods: {
     // update() {},
     // create() {},
@@ -83,8 +83,8 @@ export default {
   mounted() {
     this.todoRef.on("value", snapshot => {
       this.todos = snapshot.val();
-      console.log(this.todos)
+      console.log(this.todos);
     });
-  },
+  }
 };
 </script>

@@ -3,12 +3,12 @@ import "firebase/auth";
 
 export default {
   state: {
-    user: null,
+    user: null
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
-    },
+    }
   },
   actions: {
     setAuthenticated(context, user) {
@@ -18,13 +18,13 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(payload.email, payload.password)
-        .then((user) => {
+        .then(user => {
           const newUser = {
-            id: user.uid,
+            id: user.uid
           };
           commit("setUser", newUser);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           alert(error);
         });
@@ -33,13 +33,13 @@ export default {
       firebase
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
-        .then((user) => {
+        .then(user => {
           const newUser = {
-            id: user.uid,
+            id: user.uid
           };
           commit("setUser", newUser);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           alert(error);
         });
@@ -48,13 +48,13 @@ export default {
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-        .then((result) => {
+        .then(result => {
           const newUser = {
-            id: result.user.uid,
+            id: result.user.uid
           };
           commit("setUser", newUser);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           alert(error);
         });
@@ -66,7 +66,7 @@ export default {
         .then(() => {
           commit("setUser", null);
         });
-    },
+    }
   },
   getters: {
     authenticated(state) {
@@ -74,6 +74,6 @@ export default {
     },
     user(state) {
       return state.user;
-    },
-  },
+    }
+  }
 };
