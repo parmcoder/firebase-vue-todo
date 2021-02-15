@@ -68,18 +68,33 @@
                   </v-col>
                   <v-col>
                     <v-container>
-                      date
+                      Deadline:
+                      <v-layout align-center justify-center>
+                        <h2>{{ item.deadline }}</h2></v-layout
+                      >
+                      <v-overlay :value="overlay"
+                        ><v-date-picker :min="today" v-model="picker"></v-date-picker>
+                        <v-btn color="red" @click="overlay = !overlay">quit</v-btn>
+                        <v-btn :disabled="picker === null" color="blue" @click="setDate()">proceed</v-btn>
+                      </v-overlay>
                     </v-container>
                   </v-col>
                   <v-col cols="3">
                     <v-container>
                       <v-layout align-center justify-center>
-                        <v-btn v-if="!item.isDone && !item.isAdding" small color="blue" @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                          >ADD subtask</v-btn
-                        ><v-btn v-if="!item.isDone && item.isAdding" color="blue" small @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                          >done</v-btn
-                        >
-                        <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
+                        <v-col>
+                          <v-row>
+                            <v-btn v-if="!item.isDone && !item.isAdding" small color="blue" @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                              >ADD subtask</v-btn
+                            ><v-btn v-if="!item.isDone && item.isAdding" color="blue" small @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                              >done</v-btn
+                            >
+                          </v-row>
+                          <v-row>
+                            <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
+                            <v-btn small color="cyan" v-if="!item.isDone" @click="chooseTaskDate(item.id)">set date</v-btn>
+                          </v-row>
+                        </v-col>
                       </v-layout>
                     </v-container></v-col
                   >
@@ -152,16 +167,15 @@ const database = firebase.database();
 
 export default {
   data: () => ({
-    singleExpand: false,
-    editing: null,
-    includeFiles: true,
-    enabled: false,
     todos: [],
     todoRef: null,
     checkbox: [],
     task: '',
     subtask: {},
-    adds: {},
+    picker: null,
+    overlay: false,
+    dateTask: null,
+
     // showState: 0, // 1 for show, 2 for hide
   }),
   components: {
@@ -179,6 +193,7 @@ export default {
         isAdding: false,
         isHidden: false,
         subtasks: 'none',
+        deadline: '',
       });
       database.ref(`/users/${this.$store.state.auth.user.uid}/subtasks`).push({});
       this.task = '';
@@ -264,6 +279,18 @@ export default {
       }
       return task.isDone ? 100 : 0;
     },
+    setDate() {
+      firebase
+        .database()
+        .ref(`users/${this.$store.state.auth.user.uid}/${this.dateTask}/deadline`)
+        .set(this.picker);
+
+      this.overlay = !this.overlay;
+    },
+    chooseTaskDate(task) {
+      this.dateTask = task;
+      this.overlay = !this.overlay;
+    },
   },
   created() {
     this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
@@ -311,7 +338,6 @@ export default {
             }
           }
           // console.log(obj);
-          this.adds[key] = false;
           array.push(obj);
         });
       }
@@ -330,7 +356,23 @@ export default {
       return this.todos.filter((todo) => todo.isDone);
     },
     visibleItems() {
-      return this.todos.filter((todo) => !todo.isHidden);
+      const toShow = [];
+      const visible = this.todos.filter((todo) => !todo.isHidden);
+      visible.forEach((x) => {
+        if (x.deadline.length > 0) {
+          toShow.push(x);
+        }
+      });
+      toShow.sort((x, y) => x.deadline - y.deadline);
+      visible.forEach((x) => {
+        if (x.deadline.length <= 0) {
+          toShow.push(x);
+        }
+      });
+      return toShow;
+    },
+    today() {
+      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
     },
   },
 };
