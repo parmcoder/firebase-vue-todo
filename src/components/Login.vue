@@ -88,57 +88,58 @@
 </template>
 
 <script>
-import { required, email } from "vee-validate/dist/rules";
+import { required, email } from 'vee-validate/dist/rules';
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
-  setInteractionMode
-} from "vee-validate";
-setInteractionMode("eager");
+  setInteractionMode,
+} from 'vee-validate';
 
-extend("required", {
+setInteractionMode('eager');
+
+extend('required', {
   ...required,
-  message: "{_field_} can not be empty"
+  message: '{_field_} can not be empty',
 });
-extend("email", {
+extend('email', {
   ...email,
-  message: "Email must be valid"
+  message: 'Email must be valid',
 });
 
 export default {
   data() {
     return {
-      email: "",
-      password: ""
+      email: '',
+      password: '',
     };
   },
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
   },
   computed: {
     user() {
-      return this.$store.getters["auth/user"];
-    }
+      return this.$store.getters['auth/user'];
+    },
   },
   watch: {
     user(value) {
       if (value !== null && value !== undefined) {
-        this.$router.push("/todos");
+        this.$router.push('/todos');
       }
-    }
+    },
   },
   methods: {
     onSignin() {
-      this.$store.dispatch("auth/signUserIn", {
+      this.$store.dispatch('auth/signUserIn', {
         email: this.email,
-        password: this.password
+        password: this.password,
       });
     },
     onSigninWithGoogle() {
-      this.$store.dispatch("auth/signUserInGoogle");
-    }
-  }
+      this.$store.dispatch('auth/signUserInGoogle');
+    },
+  },
 };
 </script>

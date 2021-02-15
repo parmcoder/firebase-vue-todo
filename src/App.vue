@@ -13,11 +13,12 @@
 </template>
 
 <script>
-import NavBar from "@/components/NavBar";
+import NavBar from '@/components/NavBar.vue';
+
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    NavBar
-  }
+    NavBar,
+  },
 };
 </script>

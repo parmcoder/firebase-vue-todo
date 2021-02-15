@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/database";
-import TodoFooter from "@/components/TodoFooter.vue";
-import Tasks from "./Task.vue";
-import Footnote from "./Footnote.vue";
+import firebase from 'firebase/app';
+import 'firebase/database';
+import TodoFooter from '@/components/TodoFooter.vue';
+import Tasks from './Task.vue';
+import Footnote from './Footnote.vue';
 
 const database = firebase.database();
 
@@ -33,34 +33,34 @@ export default {
   components: {
     Tasks,
     Footnote,
-    TodoFooter
+    TodoFooter,
   },
   data() {
     return {
-      title: "Change this!",
-      todoText: "",
+      title: 'Change this!',
+      todoText: '',
       editing: null,
       todos: {},
-      todoRef: null
+      todoRef: null,
     };
   },
   created() {
     this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
   },
   mounted() {
-    this.todoRef.on("value", snapshot => {
+    this.todoRef.on('value', (snapshot) => {
       this.todos = snapshot.val();
-      console.log(this.todos)
+      console.log(this.todos);
     });
   },
   methods: {
     createTodo() {
       this.todoRef.push({ text: this.todoText.trim(), isDone: false });
-      this.todoText = "";
+      this.todoText = '';
     },
     clearCompleted() {
-      this.$store.dispatch("todos/clearCompleted");
-    }
-  }
+      this.$store.dispatch('todos/clearCompleted');
+    },
+  },
 };
 </script>

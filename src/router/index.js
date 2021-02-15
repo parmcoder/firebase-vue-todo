@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/auth';
+
 const Todos = () => import('@/components/Todo.vue');
 const Todos2 = () => import('@/components/Todo/Todo.vue');
 // const Tasks = () => import('@/components/Todo/Task.vue');
@@ -18,8 +19,7 @@ const routes = [
     component: Todos,
     meta: {
       requiresAuth: true,
-      isLoggedIn: true
-
+      isLoggedIn: true,
     },
   },
   {
@@ -28,7 +28,7 @@ const routes = [
     component: Todos2,
     meta: {
       requiresAuth: true,
-      isLoggedIn: true
+      isLoggedIn: true,
     },
   },
   {
@@ -37,7 +37,7 @@ const routes = [
     component: Login,
     meta: {
       requiresAuth: false,
-      isLoggedIn: false
+      isLoggedIn: false,
     },
   },
   {
@@ -46,8 +46,7 @@ const routes = [
     component: Register,
     meta: {
       requiresAuth: false,
-      isLoggedIn: false
-
+      isLoggedIn: false,
     },
   },
   {
@@ -56,7 +55,7 @@ const routes = [
     component: Home,
     meta: {
       requiresAuth: false,
-      isLoggedIn: false
+      isLoggedIn: false,
     },
   },
 ];
@@ -67,15 +66,15 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isLoggedIn = to.matched.some(record => record.meta.isLoggedIn);
-  
-  if (requiresAuth && !await firebase.getCurrentUser()){
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+  const isLoggedIn = to.matched.some((record) => record.meta.isLoggedIn);
+
+  if (requiresAuth && !(await firebase.getCurrentUser())) {
     next('login');
-  }else if (!isLoggedIn && await firebase.getCurrentUser()){
+  } else if (!isLoggedIn && (await firebase.getCurrentUser())) {
     next('todos');
   }
-  next()
+  next();
 });
 
 Vue.$router = router;

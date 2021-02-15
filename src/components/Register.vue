@@ -107,70 +107,71 @@
 </template>
 
 <script>
-import { required, email, min } from "vee-validate/dist/rules";
+import { required, email, min } from 'vee-validate/dist/rules';
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
-  setInteractionMode
-} from "vee-validate";
-setInteractionMode("eager");
+  setInteractionMode,
+} from 'vee-validate';
 
-extend("required", {
+setInteractionMode('eager');
+
+extend('required', {
   ...required,
-  message: "{_field_} can not be empty"
+  message: '{_field_} can not be empty',
 });
 extend('min', {
-    ...min,
-    message: '{_field_} may not be lesser than {length} characters',
-  })
-extend("email", {
+  ...min,
+  message: '{_field_} may not be lesser than {length} characters',
+});
+extend('email', {
   ...email,
-  message: "Email must be valid"
+  message: 'Email must be valid',
 });
 extend('password', {
   params: ['target'],
   validate(value, { target }) {
     return value === target;
   },
-  message: 'Password confirmation does not match'
+  message: 'Password confirmation does not match',
 });
 export default {
   data() {
     return {
-      email: "",
-      password: "",
-      password2: ""
+      email: '',
+      password: '',
+      password2: '',
     };
   },
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
   },
   computed: {
     user() {
-      return this.$store.getters["auth/user"];
-    }
+      return this.$store.getters['auth/user'];
+    },
   },
   watch: {
     user(value) {
       if (value !== null && value !== undefined) {
-        this.$router.push("/todos");
+        this.$router.push('/todos');
       }
-    }
+    },
   },
   methods: {
     onSignup() {
       if (this.password === this.password2) {
-        this.$store.dispatch("auth/signUserUp", {
+        this.$store.dispatch('auth/signUserUp', {
           email: this.email,
-          password: this.password
+          password: this.password,
         });
       }
     },
     onSigninWithGoogle() {
-      this.$store.dispatch("auth/signUserInGoogle");
-    }
-  }
+      this.$store.dispatch('auth/signUserInGoogle');
+    },
+  },
 };
 </script>

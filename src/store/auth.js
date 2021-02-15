@@ -1,5 +1,5 @@
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 export default {
   state: {
@@ -12,7 +12,7 @@ export default {
   },
   actions: {
     setAuthenticated(context, user) {
-      context.commit("setUser", user);
+      context.commit('setUser', user);
     },
     signUserUp({ commit }, payload) {
       firebase
@@ -22,7 +22,7 @@ export default {
           const newUser = {
             id: user.uid,
           };
-          commit("setUser", newUser);
+          commit('setUser', newUser);
         })
         .catch((error) => {
           console.log(error);
@@ -37,7 +37,7 @@ export default {
           const newUser = {
             id: user.uid,
           };
-          commit("setUser", newUser);
+          commit('setUser', newUser);
         })
         .catch((error) => {
           console.log(error);
@@ -52,7 +52,7 @@ export default {
           const newUser = {
             id: result.user.uid,
           };
-          commit("setUser", newUser);
+          commit('setUser', newUser);
         })
         .catch((error) => {
           console.log(error);
@@ -64,7 +64,7 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          commit("setUser", null);
+          commit('setUser', null);
         });
     },
   },

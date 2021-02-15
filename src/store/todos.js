@@ -19,7 +19,11 @@ export default {
   },
   actions: {
     clearCompleted(context) {
-      context.commit('todos/setTodos', context.state.todos.filter((todo) => !todo.isDone), { root: true });
+      context.commit(
+        'todos/setTodos',
+        context.state.todos.filter((todo) => !todo.isDone),
+        { root: true },
+      );
     },
     destroyTodo(context, todo) {
       const index = context.state.todos.indexOf(todo);

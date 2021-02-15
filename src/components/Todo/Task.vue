@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 const database = firebase.database();
 
@@ -45,22 +45,22 @@ export default {
       includeFiles: true,
       enabled: false,
       todos: {},
-      todoRef: null
+      todoRef: null,
     };
   },
-//   props: ["todos"],
+  //   props: ["todos"],
   methods: {
     // update() {},
     // create() {},
     createTodo() {
       this.todoRef.push({ text: this.todoText.trim(), isDone: false });
-      this.todoText = "";
+      this.todoText = '';
     },
     clearCompleted() {
-      this.$store.dispatch("todos/clearCompleted");
+      this.$store.dispatch('todos/clearCompleted');
     },
     destroyTodo(task) {
-      this.$store.dispatch("todos/destroyTodo", task);
+      this.$store.dispatch('todos/destroyTodo', task);
     },
     startEditing(task) {
       this.editing = task;
@@ -75,15 +75,15 @@ export default {
     },
     cancelEditing() {
       this.editing = null;
-    }
+    },
   },
   created() {
     this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
   },
   mounted() {
-    this.todoRef.on("value", snapshot => {
+    this.todoRef.on('value', (snapshot) => {
       this.todos = snapshot.val();
-      console.log(this.todos)
+      console.log(this.todos);
     });
   },
 };
