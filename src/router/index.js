@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/todos',
     name: 'todos',
-    component: Todos,
+    component: Todos2,
     meta: {
       requiresAuth: true,
       isLoggedIn: true,
@@ -25,7 +25,7 @@ const routes = [
   {
     path: '/todos2',
     name: 'todos2',
-    component: Todos2,
+    component: Todos,
     meta: {
       requiresAuth: true,
       isLoggedIn: true,

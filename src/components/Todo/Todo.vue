@@ -63,7 +63,12 @@
                 <v-row
                   ><v-col>
                     <v-container>
-                      Progress: <v-progress-linear :value="getProgress(item)"></v-progress-linear> {{getProgress(item)}} %
+                      Progress: <v-progress-linear :value="getProgress(item)"></v-progress-linear> {{ getProgress(item) }} %
+                    </v-container>
+                  </v-col>
+                  <v-col>
+                    <v-container>
+                      date
                     </v-container>
                   </v-col>
                   <v-col cols="3">
@@ -102,26 +107,25 @@
                 </v-card-text>
                 <v-divider></v-divider>
               </v-card>
-
-              <v-card>
-                <v-card-text>
-                  <v-spacer></v-spacer>
-                  Subtasks
-                  <v-spacer></v-spacer>
-                </v-card-text>
-              </v-card>
-              <v-list v-for="subtask in item.subtasks" :key="subtask.id" dense>
-                <v-list-item>
-                  <v-checkbox
-                    :input-value="subtask.isDone"
-                    v-on:change="changeStatus(item.id + '/subtasks/' + subtask.id, subtask.isDone, 'isDone')"
-                  ></v-checkbox>
-                  <v-list-item-content class="align-end">
-                    {{ subtask.text }}
-                  </v-list-item-content>
-                  <v-btn small color="red" @click="destroySubTodo(item.id, subtask.id, item.subtasks)">remove</v-btn>
-                </v-list-item>
-              </v-list>
+              <v-expansion-panels v-if="item.subtasks.length > 0">
+                <v-expansion-panel>
+                  <v-expansion-panel-header> Subtasks </v-expansion-panel-header
+                  ><v-expansion-panel-content>
+                    <v-list v-for="subtask in item.subtasks" :key="subtask.id" dense>
+                      <v-list-item>
+                        <v-checkbox
+                          :input-value="subtask.isDone"
+                          v-on:change="changeStatus(item.id + '/subtasks/' + subtask.id, subtask.isDone, 'isDone')"
+                        ></v-checkbox>
+                        <v-list-item-content class="align-end">
+                          {{ subtask.text }}
+                        </v-list-item-content>
+                        <v-btn small color="red" @click="destroySubTodo(item.id, subtask.id, item.subtasks)">remove</v-btn>
+                      </v-list-item>
+                    </v-list></v-expansion-panel-content
+                  >
+                </v-expansion-panel></v-expansion-panels
+              >
             </v-col>
           </v-row>
         </template>
