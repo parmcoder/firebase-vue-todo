@@ -21,28 +21,28 @@
 export default {
   computed: {
     items() {
-      let menuItems = [
+      const menuItems = [
         {
-          title: "Register",
-          link: "/register"
+          title: 'Register',
+          link: '/register',
         },
         {
-          title: "Login",
-          link: "/login"
-        }
+          title: 'Login',
+          link: '/login',
+        },
       ];
       return menuItems;
     },
 
     user() {
-      return this.$store.getters["auth/user"];
-    }
+      return this.$store.getters['auth/user'];
+    },
   },
   methods: {
     logoutFromFirebase() {
-      this.$store.dispatch("auth/signOut");
-      this.$router.push({ name: "login" });
-    }
-  }
+      this.$store.dispatch('auth/signOut');
+      this.$router.push({ name: 'login' });
+    },
+  },
 };
 </script>

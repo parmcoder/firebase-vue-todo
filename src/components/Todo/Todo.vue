@@ -133,20 +133,21 @@
 </template>
 
 <script>
-import firebase from "firebase/app";
-import "firebase/database";
-import { required } from "vee-validate/dist/rules";
+import firebase from 'firebase/app';
+import 'firebase/database';
+import { required } from 'vee-validate/dist/rules';
 import {
   extend,
   ValidationObserver,
   ValidationProvider,
-  setInteractionMode
-} from "vee-validate";
-setInteractionMode("eager");
+  setInteractionMode,
+} from 'vee-validate';
 
-extend("required", {
+setInteractionMode('eager');
+
+extend('required', {
   ...required,
-  message: "{_field_} can not be empty"
+  message: '{_field_} can not be empty',
 });
 const database = firebase.database();
 
@@ -159,13 +160,13 @@ export default {
     todos: [],
     todoRef: null,
     checkbox: [],
-    task: "",
+    task: '',
     subtask: {},
-    adds: {}
+    adds: {},
   }),
   components: {
     ValidationProvider,
-    ValidationObserver
+    ValidationObserver,
   },
   //   props: ["todos"],
   methods: {
@@ -176,12 +177,12 @@ export default {
         text: this.task.trim(),
         isDone: false,
         isAdding: false,
-        subtasks: "none"
+        subtasks: 'none',
       });
       database
         .ref(`/users/${this.$store.state.auth.user.uid}/subtasks`)
         .push({});
-      this.task = "";
+      this.task = '';
     },
     createSubTodo(id2) {
       console.log(this.subtask[id2]);
@@ -189,9 +190,9 @@ export default {
         .ref(`/users/${this.$store.state.auth.user.uid}/${id2}/subtasks`)
         .push({
           text: this.subtask[id2].trim(),
-          isDone: false
+          isDone: false,
         });
-      this.subtask[id2] = "";
+      this.subtask[id2] = '';
     },
     changeStatus(id2, status, value) {
       firebase
@@ -200,7 +201,7 @@ export default {
         .set(!status);
     },
     clearCompleted() {
-      this.$store.dispatch("todos/clearCompleted");
+      this.$store.dispatch('todos/clearCompleted');
     },
     destroyTodo(task) {
       firebase
@@ -221,32 +222,32 @@ export default {
     },
     cancelEditing() {
       this.editing = null;
-    }
+    },
   },
   created() {
     this.todoRef = database.ref(`/users/${this.$store.state.auth.user.uid}`);
   },
   mounted() {
-    this.todoRef.on("value", snapshot => {
+    this.todoRef.on('value', (snapshot) => {
       const fb = snapshot.val();
-      //turn object to array
+      // turn object to array
       const array = [];
       if (fb) {
-        Object.keys(fb).forEach(key => {
+        Object.keys(fb).forEach((key) => {
           const array2 = [];
           // console.log(fb[key]["subtasks"]);
           if (
-            fb[key]["subtasks"] !== "none" &&
-            fb[key]["subtasks"] !== "undefined"
+            fb[key].subtasks !== 'none'
+            && fb[key].subtasks !== 'undefined'
           ) {
-            Object.keys(fb[key]["subtasks"]).forEach(key2 => {
-              array2.push(fb[key]["subtasks"][key2]);
+            Object.keys(fb[key].subtasks).forEach((key2) => {
+              array2.push(fb[key].subtasks[key2]);
             });
             // console.log("Not none!");
           }
-          let obj = fb[key];
-          obj["id"] = key;
-          obj["subtasks"] = array2;
+          const obj = fb[key];
+          obj.id = key;
+          obj.subtasks = array2;
           this.adds[key] = false;
           array.push(obj);
         });
@@ -258,11 +259,11 @@ export default {
   },
   computed: {
     activeCount() {
-      return this.todos.filter(todo => !todo.isDone).length;
+      return this.todos.filter((todo) => !todo.isDone).length;
     },
     completedCount() {
-      return this.todos.filter(todo => todo.isDone).length;
-    }
-  }
+      return this.todos.filter((todo) => todo.isDone).length;
+    },
+  },
 };
 </script>
