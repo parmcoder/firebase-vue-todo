@@ -1,5 +1,7 @@
 <template>
   <div>
+    <NavBar />
+
     <v-container fluid>
       <v-layout align-center justify-center>
         <v-flex md10>
@@ -156,6 +158,7 @@ import { required } from 'vee-validate/dist/rules';
 import {
   extend, ValidationObserver, ValidationProvider, setInteractionMode,
 } from 'vee-validate';
+import NavBar from '@/components/NavBar.vue';
 
 setInteractionMode('eager');
 
@@ -181,6 +184,7 @@ export default {
   components: {
     ValidationProvider,
     ValidationObserver,
+    NavBar,
   },
   //   props: ["todos"],
   methods: {
