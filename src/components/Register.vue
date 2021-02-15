@@ -88,7 +88,7 @@
             <v-container>
               <v-layout align-center justify-center>
                 <v-btn color="red" x-large @click="onSigninWithGoogle">
-                  Sign up with google</v-btn
+                  Continue with google</v-btn
                 >
               </v-layout>
             </v-container>
