@@ -12,7 +12,7 @@ import '@mdi/font/css/materialdesignicons.css';
 Vue.config.productionTip = false;
 
 let isInitialized = false;
-console.log(isInitialized);
+// console.log(isInitialized);
 
 /**
  * Magic code - It is a trick to recognize user that already signed in.
