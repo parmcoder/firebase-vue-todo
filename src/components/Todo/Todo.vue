@@ -58,22 +58,25 @@
                   <v-checkbox :input-value="item.isDone" v-on:change="changeStatusTask(item.id, item.isDone, item.subtasks, 'isDone')"></v-checkbox>
                   <h4>{{ item.text }}</h4>
                   <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
-                  <v-img v-if=item.isDone max-height="100" max-width="100" src="../../assets/pngegg.png">DONE!</v-img>
+                  <v-img v-if="item.isDone" max-height="100" max-width="100" src="../../assets/pngegg.png">DONE!</v-img>
                 </v-card-title>
                 <v-row
                   ><v-col>
-                    <v-card-text>
-                      <h2>Progress bar</h2>
-                    </v-card-text>
+                    <v-container>
+                      Progress: <v-progress-linear :value="getProgress(item)"></v-progress-linear> {{getProgress(item)}} %
+                    </v-container>
                   </v-col>
                   <v-col cols="3">
-                    <v-btn v-if="!item.isDone && !item.isAdding" small color="blue" @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                      >ADD</v-btn
-                    ><v-btn v-if="!item.isDone && item.isAdding" color="blue" small @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                      >done</v-btn
-                    >
-                    <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn></v-col
+                    <v-container>
+                      <v-layout align-center justify-center>
+                        <v-btn v-if="!item.isDone && !item.isAdding" small color="blue" @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                          >ADD subtask</v-btn
+                        ><v-btn v-if="!item.isDone && item.isAdding" color="blue" small @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                          >done</v-btn
+                        >
+                        <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
+                      </v-layout>
+                    </v-container></v-col
                   >
                 </v-row>
                 <v-divider></v-divider>
@@ -177,7 +180,7 @@ export default {
       this.task = '';
     },
     createSubTodo(id2) {
-      console.log(this.subtask[id2]);
+      // console.log(this.subtask[id2]);
       database.ref(`/users/${this.$store.state.auth.user.uid}/${id2}/subtasks`).push({
         text: this.subtask[id2].trim(),
         isDone: false,
@@ -246,9 +249,16 @@ export default {
     },
     color(isDone) {
       if (isDone) {
-        return 'pink accent-2';
+        return 'pink accent-4';
       }
       return null;
+    },
+    getProgress(task) {
+      // console.log(task);
+      if (task.subtasks.length > 0) {
+        return ((task.subtasks.filter((x) => x.isDone).length / task.subtasks.length) * 100).toPrecision(3);
+      }
+      return task.isDone ? 100 : 0;
     },
   },
   created() {
@@ -302,7 +312,7 @@ export default {
         });
       }
       this.todos = array;
-      console.log(array);
+      // console.log(array);
     });
   },
   computed: {
