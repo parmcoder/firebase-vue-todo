@@ -178,18 +178,13 @@ export default {
     picker: null,
     overlay: false,
     dateTask: null,
-
-    // showState: 0, // 1 for show, 2 for hide
   }),
   components: {
     ValidationProvider,
     ValidationObserver,
     NavBar,
   },
-  //   props: ["todos"],
   methods: {
-    // update() {},
-    // create() {},
     createTodo() {
       this.todoRef.push({
         text: this.task.trim(),
@@ -203,7 +198,6 @@ export default {
       this.task = '';
     },
     createSubTodo(id2) {
-      // console.log(this.subtask[id2]);
       database.ref(`/users/${this.$store.state.auth.user.uid}/${id2}/subtasks`).push({
         text: this.subtask[id2].trim(),
         isDone: false,
@@ -211,7 +205,6 @@ export default {
       this.subtask[id2] = '';
     },
     changeStatus(id2, status, value) {
-      // console.log(`users/${this.$store.state.auth.user.uid}/${id2}/${value}`);
       firebase
         .database()
         .ref(`users/${this.$store.state.auth.user.uid}/${id2}/${value}`)
@@ -244,8 +237,6 @@ export default {
         .set({});
     },
     destroySubTodo(task, subtask, subtasks) {
-      // console.log(task);
-      // console.log(subtasks.length);
       if (subtasks.length === 1) {
         firebase
           .database()
@@ -277,7 +268,6 @@ export default {
       return null;
     },
     getProgress(task) {
-      // console.log(task);
       if (task.subtasks.length > 0) {
         return ((task.subtasks.filter((x) => x.isDone).length / task.subtasks.length) * 100).toPrecision(3);
       }
@@ -307,28 +297,21 @@ export default {
       if (fb) {
         Object.keys(fb).forEach((key) => {
           const array2 = [];
-          // console.log(fb[key]["subtasks"]);
           if (fb[key].subtasks !== 'none' && fb[key].subtasks !== 'undefined') {
             Object.keys(fb[key].subtasks).forEach((key2) => {
               const obj = fb[key].subtasks[key2];
               obj.id = key2;
               array2.push(obj);
             });
-            // console.log(array2);
           }
           const obj = fb[key];
           obj.id = key;
           obj.subtasks = array2;
 
           if (array2.length > 0) {
-            // console.log('yo!');
             const done = array2.filter((x) => x.isDone).length;
-            // console.log(done);
             if (done === array2.length) {
-              // console.log(array2);
-              // console.log(key);
               obj.isDone = true;
-              // this.changeStatusTask(key, false, array2, 'isDone');
               firebase
                 .database()
                 .ref(`users/${this.$store.state.auth.user.uid}/${key}/isDone`)
@@ -341,12 +324,10 @@ export default {
               obj.isDone = false;
             }
           }
-          // console.log(obj);
           array.push(obj);
         });
       }
       this.todos = array;
-      // console.log(array);
     });
   },
   computed: {
