@@ -1,6 +1,9 @@
 <template>
   <!-- display the navigation bar -->
   <v-toolbar>
+    <v-toolbar-items>
+      <v-layout align-center> <v-toolbar-title>VUEBASE TODO</v-toolbar-title> </v-layout>
+    </v-toolbar-items>
     <v-spacer></v-spacer>
     <!-- navigation bar links -->
     <v-toolbar-items class="hidden-xs-only" v-if="!user">
@@ -9,6 +12,7 @@
       </v-btn>
       <v-spacer></v-spacer>
     </v-toolbar-items>
+
     <!-- sign out button -->
     <v-toolbar-items class="hidden-xs-only" v-else>
       <v-btn text @click="logoutFromFirebase">

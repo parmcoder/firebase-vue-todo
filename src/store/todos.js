@@ -1,3 +1,4 @@
+// This file is not used anymore, just to demonstrate vuex logic
 export default {
   state: {
     todos: [
