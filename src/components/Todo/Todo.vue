@@ -54,7 +54,6 @@
       </v-layout>
     </v-container>
     <v-container fluid>
-      <v-layout align-center justify-center>
         <v-data-iterator :items="visibleItems" item-key="id">
           <template v-slot:default="{ items }">
             <v-row>
@@ -93,29 +92,14 @@
                       <v-col cols="3">
                         <v-container>
                           <v-layout align-center justify-center>
-                            <v-col>
-                              <v-row>
-                                <v-btn small color="cyan" v-if="!item.isDone" @click="chooseTaskDate(item.id)">set date</v-btn>
-                              </v-row>
-                              <v-row>
-                                <v-btn
-                                  v-if="!item.isDone && !item.isAdding"
-                                  small
-                                  color="blue"
-                                  @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                                  >ADD subtask</v-btn
-                                ><v-btn
-                                  v-if="!item.isDone && item.isAdding"
-                                  color="blue"
-                                  small
-                                  @click="changeStatus(item.id, item.isAdding, 'isAdding')"
-                                  >done</v-btn
-                                >
-                              </v-row>
-                              <v-row>
-                                <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
-                              </v-row>
-                            </v-col>
+                            <v-btn small color="cyan" v-if="!item.isDone" @click="chooseTaskDate(item.id)">set date</v-btn>
+
+                            <v-btn v-if="!item.isDone && !item.isAdding" small color="blue" @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                              >ADD subtask</v-btn
+                            ><v-btn v-if="!item.isDone && item.isAdding" color="blue" small @click="changeStatus(item.id, item.isAdding, 'isAdding')"
+                              >done</v-btn
+                            >
+                            <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
                           </v-layout>
                         </v-container></v-col
                       >
@@ -167,7 +151,6 @@
             </v-row>
           </template>
         </v-data-iterator>
-      </v-layout>
     </v-container>
     <v-row :key="componentKey" />
   </div>
@@ -361,6 +344,7 @@ export default {
           array.push(obj);
         });
       }
+      // this.todos = this.checkboxes;
       this.todos = array;
     });
     this.setHiddenCompleted(this.show);
@@ -394,6 +378,24 @@ export default {
         }
       });
       return toShow;
+    },
+    // TODO: I think v-model is binded incorrectly, so we might need to create an array of checkboxes
+    checkboxes() {
+      const toShow = [];
+      const visible = this.todos.filter((todo) => !todo.isHidden);
+      visible.forEach((x) => {
+        if (x.deadline.length > 0) {
+          toShow.push(x);
+        }
+      });
+      toShow.sort((x, y) => x.deadline - y.deadline);
+      visible.forEach((x) => {
+        if (x.deadline.length <= 0) {
+          toShow.push(x);
+        }
+      });
+      console.log('OK, here the checkbox', visible);
+      return toShow.map((x) => x.isDone);
     },
   },
 };
