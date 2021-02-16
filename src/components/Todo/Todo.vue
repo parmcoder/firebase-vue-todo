@@ -39,10 +39,10 @@
                   <v-layout align-center justify-center>
                     <v-spacer></v-spacer>
 
-                    <v-btn color="green" @click="setHiddenCompleted(false)"> Show completed tasks</v-btn>
+                    Show completed tasks:
+                    <v-switch color="green" v-model="hidden" @click="setHiddenCompleted()"> Show completed tasks</v-switch>
                     <v-spacer></v-spacer>
-                    <v-btn color="purple" @click="setHiddenCompleted(true)"> Hide completed tasks</v-btn>
-                    <v-spacer></v-spacer>
+
                     <v-btn color="red" @click="removeAllCompletedTasks()"> Remove completed tasks</v-btn>
                     <v-spacer></v-spacer>
                   </v-layout>
@@ -60,7 +60,7 @@
             <v-row>
               <v-col v-for="item in items" :key="item.key" lg="12">
                 <v-layout align-center justify-center>
-                  <v-card :color="color(item.isDone)" min-width="1200px" max-width="1600px">
+                  <v-card v-if="!item.isHidden" :color="color(item.isDone)" min-width="1200px" max-width="1600px">
                     <v-card-title>
                       <v-checkbox
                         :input-value="item.isDone"
@@ -95,6 +95,9 @@
                           <v-layout align-center justify-center>
                             <v-col>
                               <v-row>
+                                <v-btn small color="cyan" v-if="!item.isDone" @click="chooseTaskDate(item.id)">set date</v-btn>
+                              </v-row>
+                              <v-row>
                                 <v-btn
                                   v-if="!item.isDone && !item.isAdding"
                                   small
@@ -111,7 +114,6 @@
                               </v-row>
                               <v-row>
                                 <v-btn v-if="item.isDone" small color="red" @click="destroyTodo(item.id)">remove</v-btn>
-                                <v-btn small color="cyan" v-if="!item.isDone" @click="chooseTaskDate(item.id)">set date</v-btn>
                               </v-row>
                             </v-col>
                           </v-layout>
@@ -167,6 +169,7 @@
         </v-data-iterator>
       </v-layout>
     </v-container>
+    <v-row :key="componentKey" />
   </div>
 </template>
 
@@ -197,7 +200,8 @@ export default {
     picker: null,
     overlay: false,
     dateTask: null,
-    show: true,
+    hidden: false,
+    componentKey: 0,
   }),
   components: {
     ValidationProvider,
@@ -205,6 +209,9 @@ export default {
     NavBar,
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     createTodo() {
       this.todoRef.push({
         text: this.task.trim(),
@@ -229,7 +236,7 @@ export default {
         .database()
         .ref(`users/${this.$store.state.auth.user.uid}/${id2}/${value}`)
         .set(!status);
-      this.setHiddenCompleted(this.show);
+      // this.setHiddenCompleted(this.show);
     },
     changeStatusTask(id2, status, item, value) {
       if (item.length > 0 && !status) {
@@ -247,7 +254,10 @@ export default {
         .database()
         .ref(`users/${this.$store.state.auth.user.uid}/${id2}/${value}`)
         .set(!status);
-      this.setHiddenCompleted(this.show);
+      // console.log(this.visibleItems());
+      this.setHiddenCompleted(this.hidden);
+      // vm.forceRerender();
+      // this.todos = this.visibleItems;
     },
     clearCompleted() {
       this.$store.dispatch('todos/clearCompleted');
@@ -271,12 +281,13 @@ export default {
           .set({});
       }
     },
-    setHiddenCompleted(bool) {
-      this.show = bool;
+    setHiddenCompleted() {
       this.completedItems.forEach((x) => firebase
         .database()
         .ref(`users/${this.$store.state.auth.user.uid}/${x.id}/isHidden`)
-        .set(bool));
+        .set(!this.hidden));
+      // this.todos = this.visibleItems;
+      // console.log(this.hidden);
     },
     removeAllCompletedTasks() {
       this.completedItems.forEach((x) => firebase
@@ -352,6 +363,7 @@ export default {
       }
       this.todos = array;
     });
+    this.setHiddenCompleted(this.show);
   },
   computed: {
     activeCount() {
@@ -363,9 +375,13 @@ export default {
     completedItems() {
       return this.todos.filter((todo) => todo.isDone);
     },
+    today() {
+      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
+    },
     visibleItems() {
       const toShow = [];
       const visible = this.todos.filter((todo) => !todo.isHidden);
+      // console.log(visivisibleble);
       visible.forEach((x) => {
         if (x.deadline.length > 0) {
           toShow.push(x);
@@ -378,9 +394,6 @@ export default {
         }
       });
       return toShow;
-    },
-    today() {
-      return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, -1);
     },
   },
 };
